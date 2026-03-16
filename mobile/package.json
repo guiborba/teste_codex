@@ -1,0 +1,18 @@
+{
+  "name": "school-management-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios"
+  },
+  "dependencies": {
+    "expo": "~51.0.0",
+    "expo-notifications": "~0.28.0",
+    "firebase": "^10.12.2",
+    "react": "18.2.0",
+    "react-native": "0.74.1"
+  }
+}
