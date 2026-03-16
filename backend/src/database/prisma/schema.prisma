@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMINISTRADOR
+  DIRETOR
+  COORDENADOR
+  PROFESSOR
+  RESPONSAVEL
+  ALUNO
+}
+
+enum MensalidadeStatus {
+  PENDENTE
+  PAGO
+  ATRASADO
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  aluno        Aluno?
+  professor    Professor?
+  responsavel  Responsavel?
+  mensagensEnviadas Mensagem[] @relation("mensagens_enviadas")
+  mensagensRecebidas Mensagem[] @relation("mensagens_recebidas")
+}
+
+model Aluno {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  turmaId       String?
+  matricula     String   @unique
+  dataNascimento DateTime?
+
+  user          User      @relation(fields: [userId], references: [id])
+  turma         Turma?    @relation(fields: [turmaId], references: [id])
+  notas         Nota[]
+  frequencias   Frequencia[]
+  tarefas       TarefaEntrega[]
+  mensalidades  Mensalidade[]
+}
+
+model Responsavel {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  alunoId   String
+  parentesco String
+
+  user      User   @relation(fields: [userId], references: [id])
+}
+
+model Professor {
+  id         String      @id @default(cuid())
+  userId     String      @unique
+  especialidade String?
+
+  user       User        @relation(fields: [userId], references: [id])
+  disciplinas Disciplina[]
+}
+
+model Turma {
+  id        String   @id @default(cuid())
+  nome      String
+  serie     String
+  anoLetivo Int
+
+  alunos    Aluno[]
+  disciplinas Disciplina[]
+  comunicados Comunicado[]
+  eventos     AgendaEvento[]
+}
+
+model Disciplina {
+  id          String   @id @default(cuid())
+  nome        String
+  turmaId     String
+  professorId String
+
+  turma       Turma      @relation(fields: [turmaId], references: [id])
+  professor   Professor  @relation(fields: [professorId], references: [id])
+  notas       Nota[]
+  frequencias Frequencia[]
+  tarefas     Tarefa[]
+}
+
+model Nota {
+  id           String   @id @default(cuid())
+  alunoId       String
+  disciplinaId  String
+  bimestre      Int
+  valor         Float
+
+  aluno         Aluno      @relation(fields: [alunoId], references: [id])
+  disciplina    Disciplina @relation(fields: [disciplinaId], references: [id])
+}
+
+model Frequencia {
+  id           String   @id @default(cuid())
+  alunoId      String
+  disciplinaId String
+  data         DateTime
+  presente     Boolean
+
+  aluno         Aluno      @relation(fields: [alunoId], references: [id])
+  disciplina    Disciplina @relation(fields: [disciplinaId], references: [id])
+}
+
+model Tarefa {
+  id            String   @id @default(cuid())
+  disciplinaId  String
+  titulo        String
+  descricao     String
+  dataEntrega   DateTime
+  anexoPath     String?
+
+  disciplina    Disciplina     @relation(fields: [disciplinaId], references: [id])
+  entregas      TarefaEntrega[]
+}
+
+model TarefaEntrega {
+  id         String   @id @default(cuid())
+  tarefaId   String
+  alunoId    String
+  arquivoPath String?
+  nota       Float?
+
+  tarefa     Tarefa @relation(fields: [tarefaId], references: [id])
+  aluno      Aluno  @relation(fields: [alunoId], references: [id])
+}
+
+model Mensalidade {
+  id          String            @id @default(cuid())
+  alunoId     String
+  referencia  String
+  valor       Float
+  status      MensalidadeStatus @default(PENDENTE)
+  boletoPath  String?
+  vencimento  DateTime
+  pagoEm      DateTime?
+
+  aluno       Aluno @relation(fields: [alunoId], references: [id])
+}
+
+model Comunicado {
+  id          String   @id @default(cuid())
+  titulo      String
+  conteudo    String
+  turmaId     String?
+  abrangencia String
+  criadoEm    DateTime @default(now())
+
+  turma       Turma? @relation(fields: [turmaId], references: [id])
+}
+
+model Mensagem {
+  id            String   @id @default(cuid())
+  remetenteId   String
+  destinatarioId String
+  conteudo      String
+  enviadoEm     DateTime @default(now())
+
+  remetente     User @relation("mensagens_enviadas", fields: [remetenteId], references: [id])
+  destinatario  User @relation("mensagens_recebidas", fields: [destinatarioId], references: [id])
+}
+
+model Ocorrencia {
+  id         String   @id @default(cuid())
+  alunoId    String
+  tipo       String
+  descricao  String
+  registradaEm DateTime @default(now())
+}
+
+model AgendaEvento {
+  id        String   @id @default(cuid())
+  titulo    String
+  descricao String?
+  data      DateTime
+  tipo      String
+  turmaId   String?
+
+  turma     Turma? @relation(fields: [turmaId], references: [id])
+}
