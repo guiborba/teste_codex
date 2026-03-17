@@ -1,8 +1,7 @@
 import { api } from './api';
 
 export const financeiroService = {
-  async overview() {
-    const { data } = await api.get('/financeiro/overview');
-    return data;
+  listMensalidades() {
+    return api.get('/mensalidades').then((r) => r.data);
   },
 };

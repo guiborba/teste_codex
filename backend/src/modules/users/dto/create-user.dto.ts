@@ -3,15 +3,15 @@ import { IsEmail, IsEnum, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsEnum(Role)
-  role: Role;
+  role!: Role;
 }

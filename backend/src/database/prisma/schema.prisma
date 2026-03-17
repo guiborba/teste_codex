@@ -31,12 +31,14 @@ model User {
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  refreshTokenHash String?
 
   aluno        Aluno?
   professor    Professor?
   responsavel  Responsavel?
   mensagensEnviadas Mensagem[] @relation("mensagens_enviadas")
   mensagensRecebidas Mensagem[] @relation("mensagens_recebidas")
+  deviceTokens DeviceToken[]
 }
 
 model Aluno {
@@ -194,4 +196,15 @@ model AgendaEvento {
   turmaId   String?
 
   turma     Turma? @relation(fields: [turmaId], references: [id])
+}
+
+
+model DeviceToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  platform  String
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id])
 }

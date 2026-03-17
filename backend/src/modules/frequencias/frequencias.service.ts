@@ -1,9 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { FrequenciasRepository } from './repository/frequencias.repository';
 
 @Injectable()
 export class FrequenciasService {
-  // Serviço inicial: evoluir com regras de negócio e repositórios específicos.
-  getOverview() {
-    return { module: 'frequencias', status: 'ok' };
+  constructor(private readonly repository: FrequenciasRepository) {}
+
+  create(data: any) {
+    return this.repository.create(data);
+  }
+
+  findAll() {
+    return this.repository.findAll();
+  }
+
+  async findOne(id: string) {
+    const entity = await this.repository.findById(id);
+    if (!entity) throw new NotFoundException('Frequencias não encontrado');
+    return entity;
+  }
+
+  update(id: string, data: any) {
+    return this.repository.update(id, data);
+  }
+
+  remove(id: string) {
+    return this.repository.delete(id);
   }
 }

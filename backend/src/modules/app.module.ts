@@ -14,6 +14,7 @@ import { ComunicadosModule } from './comunicados/comunicados.module';
 import { MensagensModule } from './mensagens/mensagens.module';
 import { OcorrenciasModule } from './ocorrencias/ocorrencias.module';
 import { AgendaModule } from './agenda/agenda.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AgendaModule } from './agenda/agenda.module';
     MensagensModule,
     OcorrenciasModule,
     AgendaModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

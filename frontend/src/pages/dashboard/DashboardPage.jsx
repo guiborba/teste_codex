@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '../../context/authContext';
 
 const dashboardByRole = {
@@ -11,12 +11,27 @@ const dashboardByRole = {
 };
 
 export function DashboardPage() {
-  const { user } = useAuth();
-  const cards = useMemo(() => dashboardByRole[user.role] ?? [], [user.role]);
+  const { user, login, logout } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const cards = useMemo(() => (user ? dashboardByRole[user.role] ?? [] : []), [user]);
+
+  if (!user) {
+    return (
+      <main>
+        <h1>Login</h1>
+        <input placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input placeholder="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button onClick={() => login(email, password)}>Entrar</button>
+      </main>
+    );
+  }
 
   return (
     <main>
       <h1>Dashboard {user.role}</h1>
+      <button onClick={logout}>Sair</button>
       <ul>
         {cards.map((item) => (
           <li key={item}>{item}</li>

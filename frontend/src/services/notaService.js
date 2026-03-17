@@ -1,8 +1,7 @@
 import { api } from './api';
 
 export const notaService = {
-  async overview() {
-    const { data } = await api.get('/nota/overview');
-    return data;
+  list() {
+    return api.get('/notas').then((r) => r.data);
   },
 };

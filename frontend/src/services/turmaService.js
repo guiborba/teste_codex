@@ -1,8 +1,7 @@
 import { api } from './api';
 
 export const turmaService = {
-  async overview() {
-    const { data } = await api.get('/turma/overview');
-    return data;
+  list() {
+    return api.get('/turmas').then((r) => r.data);
   },
 };
